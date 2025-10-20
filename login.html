@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Register - We Connect You</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<style>
+    .navbar-container img{
+        height: 10vh;
+        width:10vw;
+    }
+</style>
+<body>
+
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="We Connect You Logo">
+            </a>
+        </header>
+
+    <main class="container">
+        <div class="login-container">
+            <div class="login-tabs">
+                <button class="tab-btn active" onclick="showForm('login')">Login</button>
+                <button class="tab-btn" onclick="showForm('register')">Register</button>
+            </div>
+
+            <form id="login-form" class="login-form active">
+                <h2>Login to your Account</h2>
+                <div class="form-group">
+                    <label for="login-mobile">Mobile Number:</label>
+                    <input type="tel" id="login-mobile" required pattern="[0-9]{10}" maxlength="10" title="Please enter a 10-digit mobile number">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password:</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn-submit">Login</button>
+                <p id="login-msg" class="form-message"></p>
+
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="#" id="forgot-password-link" style="color: var(--primary-color); text-decoration: none;">Forgot Password?</a>
+                </div>
+            </form>
+
+            <form id="register-form" class="login-form">
+                </form>
+
+            <form id="reset-password-form" class="login-form" style="display: none;">
+                <h2>Reset Your Password</h2>
+                <div class="form-group">
+                    <label for="reset-mobile">Your Mobile Number:</label>
+                    <input type="tel" id="reset-mobile" required pattern="[0-9]{10}" maxlength="10" title="Enter the mobile number associated with your account">
+                </div>
+                <div class="form-group">
+                    <label for="reset-new-password">New Password:</label>
+                    <input type="password" id="reset-new-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="reset-confirm-password">Confirm New Password:</label>
+                    <input type="password" id="reset-confirm-password" required>
+                </div>
+                <button type="submit" class="btn-submit">Update Password</button>
+                <p id="reset-msg" class="form-message"></p>
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="#" id="back-to-login-link" style="color: var(--text-secondary); text-decoration: none;">&larr; Back to Login</a>
+                </div>
+            </form>
+
+        </div>
+    </main>
+
+    <script src="login.js"></script>
+</body>
+</html>

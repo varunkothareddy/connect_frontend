@@ -1,0 +1,41 @@
+:root {
+    --primary-color: #008080; /* Teal */
+    --primary-hover: #006666;
+    --bg-color: #f7f9fc;
+    --card-color: #ffffff;
+    --text-primary: #1a202c;
+    --text-secondary: #5a687f;
+    --border-color: #e2e8f0;
+}
+    .navbar-container img{
+        height: 20vh;
+        width:20vw;
+    }
+
+body { font-family: sans-serif; margin: 0; background-color: var(--bg-color); color: var(--text-primary); line-height: 1.6; }
+.container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+.navbar { background-color: var(--card-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px 20px; border-bottom: 1px solid var(--border-color); }
+.navbar-container { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.navbar-container img{height: 20vh;width: 20vw;}
+.logo img { height: 40px; width: auto; display: block; }
+.nav-login { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text-secondary); font-weight: 600; font-size: 16px; transition: color 0.2s ease; }
+.nav-login:hover { color: var(--primary-color); }
+.nav-login .fa-user-circle { font-size: 24px; }
+.hero { text-align: center; padding: 60px 20px; }
+.hero h1 { font-size: 42px; color: var(--text-primary); margin: 0; }
+.action-cards { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+.card { background-color: var(--card-color); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-decoration: none; color: var(--text-primary); padding: 30px; width: 300px; text-align: center; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+.card-icon { font-size: 40px; color: var(--primary-color); margin-bottom: 15px; }
+.card h2 { font-size: 22px; margin: 10px 0; }
+.card p { font-size: 16px; color: var(--text-secondary); margin: 0; }
+.nav-logged-in { display: flex; align-items: center; gap: 15px; }
+#nav-username { font-weight: 600; color: var(--text-primary); }
+.btn-logout { background-color: transparent; border: 1px solid #aa2222; color: #aa2222; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.2s ease; }
+.btn-logout:hover { background-color: #aa2222; color: white; }
+@media (max-width: 768px) {
+    .hero h1 { font-size: 32px; }
+    .action-cards { flex-direction: column; align-items: center; }
+    .card { width: 90%; max-width: 400px; }
+    .login-text { display: none; }
+}

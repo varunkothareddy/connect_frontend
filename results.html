@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - We Connect You</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .worker-card { background-color: var(--card-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+        .worker-info { flex-grow: 1; }
+        .worker-card h3 { margin: 0 0 10px 0; color: var(--primary-color); font-size: 22px; }
+        .worker-card p { margin: 5px 0; color: var(--text-secondary); font-weight: 500; font-size: 16px; }
+        .worker-card .location { font-style: italic; }
+        .btn-call { padding: 10px 15px; background-color: var(--primary-color); color: white; text-decoration: none; border-radius: 5px; font-weight: 600; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.2s ease; flex-shrink: 0; }
+        .btn-call:hover { background-color: var(--primary-hover); }
+    
+    .navbar-container img{
+        height: 10vh;
+        width:10vw;
+    }
+</style>
+
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="We Connect You Logo">
+            </a>
+            <nav>
+                <a href="login.html" class="nav-login" id="nav-logged-out" aria-label="Login">
+                    <i class="fas fa-user-circle"></i> <span class="login-text">Login</span>
+                </a>
+                <div class="nav-logged-in" id="nav-logged-in" style="display: none;">
+                    <span id="nav-username"></span>
+                    <button id="logout-btn" class="btn-logout">Logout</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <main class="container">
+        <div class="login-container" style="max-width: 600px;">
+            <div class="login-form active" style="display:block;">
+                <h2>Search Results</h2>
+                <div id="results-container"><p>Loading results...</p></div>
+                <a href="search.html" style="text-decoration: none; margin-top: 20px; display: inline-block;">&larr; Back to Search</a>
+            </div>
+        </div>
+    </main>
+    <script src="auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const resultsContainer = document.getElementById('results-container');
+            const resultsData = sessionStorage.getItem('searchResults');
+            if (!resultsData) { resultsContainer.innerHTML = '<p class="form-message error">No results found or search not performed.</p>'; return; }
+            const workers = JSON.parse(resultsData);
+            resultsContainer.innerHTML = '';
+            if (workers.length === 0) { resultsContainer.innerHTML = '<p>No workers matched your search.</p>'; return; }
+            workers.forEach(worker => {
+                const card = document.createElement('div'); card.className = 'worker-card';
+                const workType = worker.workType.charAt(0).toUpperCase() + worker.workType.slice(1);
+                card.innerHTML = `<div class="worker-info"><h3>${worker.name}</h3><p><strong>Work:</strong> ${workType}</p><p><strong>Mobile:</strong> ${worker.mobile}</p><p class="location"><strong>Location:</strong> ${worker.location}</p></div><a href="tel:${worker.mobile}" class="btn-call"><i class="fas fa-phone"></i> Call</a>`;
+                resultsContainer.appendChild(card);
+            });
+            sessionStorage.removeItem('searchResults');
+        });
+    </script>
+</body>
+</html>
