@@ -34,7 +34,7 @@
                 <h2>Login to your Account</h2>
                 <div class="form-group">
                     <label for="login-mobile">Mobile Number:</label>
-                    <input type="tel" id="login-mobile" required pattern="[0-9]{10}" maxlength="10" title="Please enter a 10-digit mobile number">
+                    <input type="tel" id="login-mobile" required pattern="[0-9]{10}" maxlength="10">
                 </div>
                 <div class="form-group">
                     <label for="login-password">Password:</label>
@@ -42,33 +42,37 @@
                 </div>
                 <button type="submit" class="btn-submit">Login</button>
                 <p id="login-msg" class="form-message"></p>
-
                 <div style="text-align: center; margin-top: 15px;">
-                    <a href="#" id="forgot-password-link" style="color: var(--primary-color); text-decoration: none;">Forgot Password?</a>
+                    <a href="#" id="forgot-password-link" style="color: var(--text-secondary); text-decoration: none;">Forgot Password?</a>
                 </div>
             </form>
 
             <form id="register-form" class="login-form">
-    <h2>Create a New Account</h2>
-    <div class="form-group">
-        <label for="reg-name">Your Full Name:</label>
-        <input type="text" id="reg-name" required> 
-    </div>
-    <div class="form-group">
-        <label for="reg-mobile">Mobile Number:</label>
-        <input type="tel" id="reg-mobile" required pattern="[0-9]{10}" maxlength="10" title="Please enter a 10-digit mobile number">
-    </div>
-    <div class="form-group">
-        <label for="reg-password">Password:</label>
-        <input type="password" id="reg-password" required minlength="6">
-    </div>
-    <div class="form-group">
-        <label for="reg-password-confirm">Confirm Password:</label>
-        <input type="password" id="reg-password-confirm" required minlength="6">
-    </div>
-    <p id="register-msg" class="form-message"></p>
-    <button type="submit" class="btn-submit">Register</button>
-</form>
+                <h2>Create a New Account</h2>
+                
+                <div class="form-group">
+                    <label for="register-name">Your Full Name:</label>
+                    <input type="text" id="register-name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-mobile">Mobile Number (10 digits):</label>
+                    <input type="tel" id="register-mobile" required pattern="[0-9]{10}" maxlength="10" title="10-digit mobile number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-password">Password:</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-confirm-password">Confirm Password:</label>
+                    <input type="password" id="register-confirm-password" required>
+                </div>
+                
+                <button type="submit" class="btn-submit">Register</button>
+                <p id="register-msg" class="form-message"></p>
+            </form>
 
             <form id="reset-password-form" class="login-form" style="display: none;">
                 <h2>Reset Your Password</h2>
@@ -92,11 +96,12 @@
             </form>
 
         </div>
-        <a href="index.html" class="fab-home" aria-label="Back to Home">
+    </main>
+    
+    <a href="index.html" class="fab-home" aria-label="Back to Home">
         <i class="fas fa-home"></i>
     </a>
-    </main>
-
+    
     <script src="login.js"></script>
 </body>
 </html>
