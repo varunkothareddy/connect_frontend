@@ -66,16 +66,17 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             msg.textContent = ''; msg.className = 'form-message';
 
-            // Gather all fields, including the assumed mandatory ones
+            // Gather all fields
             const name = nameInput.value;
-            const email = document.getElementById('join-email').value; // 🔑 EMAIL FIELD
+            const role = document.getElementById('join-role').value; // 🔑 NEW ROLE FIELD
+            const email = document.getElementById('join-email').value; 
             const mobile = mobileInput.value;
             const location = document.getElementById('join-location').value;
             const workType = workTypeSelect.value;
             const bio = document.getElementById('join-bio').value;
-            const isProfileComplete = document.getElementById('is-profile-complete').value; // 🔑 HIDDEN STATUS FLAG
+            const isProfileComplete = document.getElementById('is-profile-complete').value; 
             
-            // CRITICAL FIX: Sending skills as a processed Array of Strings
+            // Skills as array
             const skills = document.getElementById('join-skills').value
                 .split(',')
                 .map(s => s.trim())
@@ -104,8 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Content-Type': 'application/json', 
                         'Authorization': 'Bearer ' + token 
                     }, 
-                    // Send ALL fields to satisfy the backend schema and prevent crash
-                    body: JSON.stringify({ name, email, mobile, location, workType, skills, bio, isProfileComplete }) 
+                    // CRITICAL: Sending all 8 fields + the status flag
+                    body: JSON.stringify({ name, role, email, mobile, location, workType, skills, bio, isProfileComplete }) 
                 });
 
                 if (response.ok) {
