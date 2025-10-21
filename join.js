@@ -2,14 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const joinForm = document.getElementById('join-form');
     const nameInput = document.getElementById('join-name');
     const mobileInput = document.getElementById('join-mobile');
-    const msg = document.getElementById('join-msg');
     const locationInput = document.getElementById('join-location');
     const workTypeSelect = document.getElementById('join-work-type');
-    
-    // NOTE: All dynamic logic (skills, experience, bio) is removed as the backend doesn't support those fields.
+    const msg = document.getElementById('join-msg');
 
     // --- 0. Initial Setup ---
     function initializeForm() {
+        // NOTE: If you are using 'auth.js' for user status, ensure it sets the token.
         const token = localStorage.getItem('userToken');
         if (!token) {
             msg.textContent = 'Session expired. Please log in.';
@@ -19,9 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 1. DYNAMIC SKILLS LOGIC (Removed - Backend doesn't support it) ---
-
-    // --- 2. FORM SUBMISSION HANDLER ---
+    // --- 1. FORM SUBMISSION HANDLER ---
     if (joinForm) {
         joinForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -56,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Content-Type': 'application/json', 
                         'Authorization': 'Bearer ' + token 
                     }, 
-                    // Send ONLY the FOUR required fields
+                    // CRITICAL: Send ONLY the four required fields
                     body: JSON.stringify({ name, mobile, location, workType }) 
                 });
 
@@ -64,12 +61,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const data = await response.json(); 
                     msg.textContent = 'Profile saved! Redirecting home...'; 
                     msg.classList.add('success');
+                    // You may want to redirect to a search page or profile view instead of index.html
                     setTimeout(() => { window.location.href = 'index.html'; }, 2000); 
                 } else {
                     let errorMessage = `Error: ${response.status} ${response.statusText}`; 
                     try { 
                         const data = await response.json(); 
-                        errorMessage = 'Error: ' + (data.message || 'Validation failed. Check backend logs.'); 
+                        // This should now show any validation errors from the backend if they occur
+                        errorMessage = 'Error: ' + (data.message || 'Validation failed.'); 
                     } catch (e) {} 
                     
                     msg.textContent = errorMessage; 
