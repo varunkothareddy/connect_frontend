@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileInput = document.getElementById('join-mobile');
     const msg = document.getElementById('join-msg');
 
-    // --- Dynamic Skill Logic Elements ---
     const workTypeSelect = document.getElementById('join-work-type');
     const skillsInput = document.getElementById('join-skills');
     const skillsContainer = document.getElementById('suggested-skills-container');
@@ -12,10 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 0. Initial Setup ---
     function initializeForm() {
         const token = localStorage.getItem('userToken');
-        
-        // CRITICAL: Removed all logic to pre-fill name and mobile.
-        // User must now manually enter these fields.
-
         if (!token) {
             msg.textContent = 'Session expired. Please log in.';
             msg.classList.add('error');
@@ -24,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 1. DYNAMIC SKILLS LOGIC ---
+    // --- 1. DYNAMIC SKILLS LOGIC (Unchanged) ---
     const skillSuggestions = {
         'Plumber': ['Pipe Fitting', 'Drain Cleaning', 'Water Heater Repair', 'Fixture Installation', 'Leak Detection'],
         'Electrician': ['House Wiring', 'Circuit Breakers', 'Troubleshooting', 'Solar Installation', 'Appliance Repair'],
@@ -38,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedWorkType = workTypeSelect.value;
         const suggestions = skillSuggestions[selectedWorkType] || [];
         
-        skillsContainer.innerHTML = ''; // Clear previous suggestions
+        skillsContainer.innerHTML = ''; 
 
         if (!selectedWorkType) {
             skillsContainer.innerHTML = '<p style="font-size:0.9em; color:#999;">Select a profession above to see suggestions.</p>';
@@ -51,10 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
             label.textContent = skill;
             label.addEventListener('click', () => {
                 let currentSkills = skillsInput.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
-                
                 if (!currentSkills.includes(skill)) {
                     currentSkills.push(skill);
-                    // Add the new skill, ensuring a comma is only added if other skills exist
                     skillsInput.value = currentSkills.join(', ') + ', '; 
                 }
             });
@@ -64,8 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (workTypeSelect) {
         workTypeSelect.addEventListener('change', updateSuggestedSkills);
-    }
-    if (workTypeSelect) {
         updateSuggestedSkills();
     }
 
@@ -75,35 +66,31 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             msg.textContent = ''; msg.className = 'form-message';
 
-            // Gather all fields (including new ones: skills, bio)
+            // Gather all fields, including the assumed mandatory ones
             const name = nameInput.value;
+            const email = document.getElementById('join-email').value; // 🔑 EMAIL FIELD
             const mobile = mobileInput.value;
             const location = document.getElementById('join-location').value;
             const workType = workTypeSelect.value;
             const bio = document.getElementById('join-bio').value;
+            const isProfileComplete = document.getElementById('is-profile-complete').value; // 🔑 HIDDEN STATUS FLAG
             
-            // Process skills input
-            // NEW CODE: Sends a single STRING
-const skills = document.getElementById('join-skills').value;
-            // Final API call body
-body: JSON.stringify({ name, mobile, location, workType, skills, bio })
+            // CRITICAL FIX: Sending skills as a processed Array of Strings
+            const skills = document.getElementById('join-skills').value
+                .split(',')
+                .map(s => s.trim())
+                .filter(s => s.length > 0); 
             
-            // Frontend validation check
-            if (skills.length === 0) {
-                msg.textContent = 'Please enter at least one skill.'; 
-                msg.classList.add('error'); 
-                return; 
-            }
+            // Basic Frontend validation check
             if (mobile.length !== 10) {
                 msg.textContent = 'Mobile number must be 10 digits.'; 
                 msg.classList.add('error'); 
                 return; 
             }
 
-
             const token = localStorage.getItem('userToken');
             if (!token) { 
-                msg.textContent = 'Not logged in. Redirecting to login...'; 
+                msg.textContent = 'Not logged in. Redirecting...'; 
                 msg.classList.add('error'); 
                 localStorage.setItem('intendedDestination', 'join.html');
                 setTimeout(() => window.location.href = 'login.html', 2000); 
@@ -117,19 +104,15 @@ body: JSON.stringify({ name, mobile, location, workType, skills, bio })
                         'Content-Type': 'application/json', 
                         'Authorization': 'Bearer ' + token 
                     }, 
-                    // Send ALL required fields to satisfy the backend schema
-                    body: JSON.stringify({ name, mobile, location, workType, skills, bio }) 
+                    // Send ALL fields to satisfy the backend schema and prevent crash
+                    body: JSON.stringify({ name, email, mobile, location, workType, skills, bio, isProfileComplete }) 
                 });
 
                 if (response.ok) {
                     const data = await response.json(); 
                     msg.textContent = 'Profile saved! Redirecting home...'; 
                     msg.classList.add('success');
-                    
-                    // Final Success Redirect
-                    setTimeout(() => { 
-                        window.location.href = 'index.html'; 
-                    }, 2000); 
+                    setTimeout(() => { window.location.href = 'index.html'; }, 2000); 
                 } else {
                     let errorMessage = `Error: ${response.status} ${response.statusText}`; 
                     try { 
@@ -152,6 +135,5 @@ body: JSON.stringify({ name, mobile, location, workType, skills, bio })
         });
     }
 
-    // Call initialization on load
     initializeForm();
 });
