@@ -66,11 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             msg.textContent = ''; msg.className = 'form-message';
 
-            // Gather all fields
+            // Gather all fields, including the new 'experience' field
             const name = nameInput.value;
-            const role = document.getElementById('join-role').value; // 🔑 NEW ROLE FIELD
+            const role = document.getElementById('join-role').value;
             const email = document.getElementById('join-email').value; 
             const mobile = mobileInput.value;
+            // 🔑 NEW FIELD: Years of Experience, converted to a number
+            const experience = parseInt(document.getElementById('join-experience').value, 10); 
             const location = document.getElementById('join-location').value;
             const workType = workTypeSelect.value;
             const bio = document.getElementById('join-bio').value;
@@ -88,6 +90,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 msg.classList.add('error'); 
                 return; 
             }
+            if (isNaN(experience) || experience < 0) {
+                msg.textContent = 'Years of Experience must be a positive number.'; 
+                msg.classList.add('error'); 
+                return; 
+            }
+
 
             const token = localStorage.getItem('userToken');
             if (!token) { 
@@ -105,8 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Content-Type': 'application/json', 
                         'Authorization': 'Bearer ' + token 
                     }, 
-                    // CRITICAL: Sending all 8 fields + the status flag
-                    body: JSON.stringify({ name, role, email, mobile, location, workType, skills, bio, isProfileComplete }) 
+                    // CRITICAL: Sending ALL fields, including experience
+                    body: JSON.stringify({ name, role, email, mobile, experience, location, workType, skills, bio, isProfileComplete }) 
                 });
 
                 if (response.ok) {
