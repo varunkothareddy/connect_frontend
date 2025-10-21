@@ -49,7 +49,26 @@
             </form>
 
             <form id="register-form" class="login-form">
-                </form>
+    <h2>Create a New Account</h2>
+    <div class="form-group">
+        <label for="reg-name">Your Full Name:</label>
+        <input type="text" id="reg-name" required> 
+    </div>
+    <div class="form-group">
+        <label for="reg-mobile">Mobile Number:</label>
+        <input type="tel" id="reg-mobile" required pattern="[0-9]{10}" maxlength="10" title="Please enter a 10-digit mobile number">
+    </div>
+    <div class="form-group">
+        <label for="reg-password">Password:</label>
+        <input type="password" id="reg-password" required minlength="6">
+    </div>
+    <div class="form-group">
+        <label for="reg-password-confirm">Confirm Password:</label>
+        <input type="password" id="reg-password-confirm" required minlength="6">
+    </div>
+    <p id="register-msg" class="form-message"></p>
+    <button type="submit" class="btn-submit">Register</button>
+</form>
 
             <form id="reset-password-form" class="login-form" style="display: none;">
                 <h2>Reset Your Password</h2>
