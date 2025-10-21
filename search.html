@@ -11,8 +11,6 @@
     .navbar-container img{
         height: 10vh;
         width:10vw;
-    } .navbar-container a{
-        text-decoration:none;
     }
 </style>
 </head>
@@ -22,7 +20,6 @@
             <a href="index.html" class="logo">
                 <img src="logo.png" alt="We Connect You Logo">
             </a>
-            <a href="index.html" class="nav-button">🏠︎ Home</a>
             <nav>
                 <a href="login.html" class="nav-login" id="nav-logged-out" aria-label="Login">
                     <i class="fas fa-user-circle"></i> <span class="login-text">Login</span>
@@ -34,9 +31,10 @@
             </nav>
         </div>
     </header>
+
     <main class="container">
-        <div class="login-container">
-            <form id="search-form" class="login-form active" style="display:block;">
+        <div class="login-container" style="max-width: 550px;">
+            <form id="search-form" class="login-form active">
                 <h2>Find a Worker</h2>
                 <p style="text-align:center; color: var(--text-secondary); margin-top:-15px; margin-bottom: 20px;">
                     Find professionals in your area.
@@ -47,7 +45,7 @@
                 </div>
                 <div class="form-group">
                     <label for="search-work-type">Kind of Work:</label>
-                    <select id="search-work-type" required>
+                    <select id="search-work-type" required onchange="populateSubWorkSearch()">
                         <option value="">-- Select work --</option>
                         <option value="plumber">Plumber</option>
                         <option value="electrician">Electrician</option>
@@ -58,14 +56,24 @@
                         <option value="driver">Driver</option>
                     </select>
                 </div>
+                
+                <div class="form-group" id="sub-work-group-search" style="display:none;">
+                    <label for="search-sub-work-type">Sub-Work Specialization:</label>
+                    <select id="search-sub-work-type">
+                        <option value="">-- Any specialization --</option>
+                    </select>
+                </div>
+
                 <button type="submit" class="btn-submit">Search</button>
                 <p id="search-msg" class="form-message"></p>
             </form>
         </div>
     </main>
+    
     <a href="index.html" class="fab-home" aria-label="Back to Home">
         <i class="fas fa-home"></i>
     </a>
+    
     <script src="auth.js"></script>
     <script src="search.js"></script>
 </body>
