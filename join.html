@@ -3,76 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join as Worker - We Connect You</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="login.css">
+    <title>Complete Profile - We Connect You</title>
+    <link rel="stylesheet" href="style.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<style>
-    .navbar-container img{
-        height: 10vh;
-        width:10vw;
-    }
-    .navbar-container a{
-        text-decoration:none;
-    }
-</style>
+
+    <style>
+        :root {
+            --primary-color: #007bff; /* Example primary color */
+            --secondary-color: #6c757d; /* Example secondary color */
+            --background-color: #f8f9fa; /* Light background */
+            --card-background: #ffffff; /* White card background */
+            --text-color: #212529;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+        }
+
+        body {
+            font-family: sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding-top: 60px; /* Space for fixed navbar */
+        }
+
+        /* Navbar styles for context */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: var(--card-background);
+            border-bottom: 1px solid #dee2e6;
+            z-index: 1000;
+        }
+
+        .navbar-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 20px;
+        }
+
+        .logo img {
+            height: 40px; 
+            width: auto;
+        }
+
+        .nav-button {
+            text-decoration: none;
+            color: var(--primary-color);
+            padding: 8px 15px;
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .nav-button:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Form Styles */
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: var(--card-background);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="tel"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #1e7e34;
+        }
+        
+        /* Dynamic Skills Styles */
+        .skill-labels-container {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px; /* Space between labels */
+            padding: 5px 0;
+            border-top: 1px solid #eee;
+            margin-top: 5px;
+        }
+
+        .skill-label {
+            background-color: #e0e0e0; /* Light gray background */
+            color: var(--text-color);
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s;
+            user-select: none;
+        }
+
+        .skill-label:hover {
+            background-color: #c0c0c0; /* Slightly darker on hover */
+        }
+        
+        .form-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .form-message.success {
+            background-color: #d4edda;
+            color: var(--success-color);
+        }
+
+        .form-message.error {
+            background-color: #f8d7da;
+            color: var(--error-color);
+        }
+    </style>
 </head>
 <body>
+
     <header class="navbar">
         <div class="navbar-container">
             <a href="index.html" class="logo">
                 <img src="logo.png" alt="We Connect You Logo">
             </a>
-            <a href="index.html" class="nav-button">🏠︎ Home</a>
-            <nav>
-                <a href="login.html" class="nav-login" id="nav-logged-out" aria-label="Login">
-                    <i class="fas fa-user-circle"></i> <span class="login-text">Login</span>
-                </a>
-                <div class="nav-logged-in" id="nav-logged-in" style="display: none;">
-                    <span id="nav-username"></span>
-                    <button id="logout-btn" class="btn-logout">Logout</button>
-                </div>
-            </nav>
+            <a href="index.html" class="nav-button">Home</a>
         </div>
     </header>
+
     <main class="container">
-        <div class="login-container">
-            <form id="join-form" class="login-form active" style="display:block;">
-                <h2>Create Your Worker Profile</h2>
-                <p style="text-align:center; color: var(--text-secondary); margin-top:-15px; margin-bottom: 20px;">
-                    Fill out your details to get found.
-                </p>
-                <div class="form-group">
-                    <label for="join-name">Full Name:</label>
-                    <input type="text" id="join-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="join-mobile">Public Mobile Number:</label>
-                    <input type="tel" id="join-mobile" required pattern="[0-9]{10}" maxlength="10" title="10-digit mobile number">
-                </div>
-                <div class="form-group">
-                    <label for="join-location">Your Location/Town:</label>
-                    <input type="text" id="join-location" required>
-                </div>
-                <div class="form-group">
-                    <label for="join-work-type">Kind of Work:</label>
-                    <select id="join-work-type" required>
-                        <option value="">-- Select work --</option>
-                        <option value="plumber">Plumber</option>
-                        <option value="electrician">Electrician</option>
-                        <option value="painter">Painter</option>
-                        <option value="carpenter">Carpenter</option>
-                        <option value="day-laborer">Day Laborer</option>
-                        <option value="maid">Maid / Housekeeping</option>
-                        <option value="driver">Driver</option>
+        <h2>Complete Your Profile</h2>
+        <form id="join-form">
+            <p id="join-msg" class="form-message"></p>
+
+            <div class="form-group">
+                <label for="join-name">Full Name:</label>
+                <input type="text" id="join-name" required placeholder="Your full name" readonly>
+            </div>
+            <div class="form-group">
+                <label for="join-mobile">Mobile Number:</label>
+                <input type="tel" id="join-mobile" required pattern="[0-9]{10}" maxlength="10" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="join-location">Your Location (City/Area):</label>
+                <input type="text" id="join-location" required placeholder="e.g., Hyderabad, Gachibowli">
+            </div>
+
+            <div class="form-group">
+                <label for="join-work-type">Main Profession/Work Type:</label>
+                <select id="join-work-type" required>
+                    <option value="" disabled selected>Select your main profession</option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Plumber">Plumber</option>
+                    <option value="Carpenter">Carpenter</option>
+                    <option value="Cleaner">Cleaner</option>
+                    <option value="Welder">Welder</option>
+                    <option value="Mechanic">Mechanic</option>
                     </select>
+            </div>
+
+            <div class="form-group">
+                <label for="join-skills">Skills (Select from below or type, separated by commas):</label>
+                <input type="text" id="join-skills" required placeholder="e.g., Wiring, Pipe Fitting, Fabrication">
+                <div id="suggested-skills-container" class="skill-labels-container">
+                    <p style="font-size:0.9em; color:#999;">Select a profession above to see suggestions.</p>
                 </div>
-                <button type="submit" class="btn-submit">Submit Profile</button>
-                <p id="join-msg" class="form-message"></p>
-            </form>
-        </div>
+            </div>
+
+            <div class="form-group">
+                <label for="join-bio">Short Bio or Professional Headline:</label>
+                <textarea id="join-bio" rows="3" required placeholder="A short description of your experience or services."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">Save Profile and Join</button>
+        </form>
     </main>
-    <script src="auth.js"></script>
+
     <script src="join.js"></script>
 </body>
 </html>
