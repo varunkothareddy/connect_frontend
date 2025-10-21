@@ -83,7 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const bio = document.getElementById('join-bio').value;
             
             // Process skills input
-            const skills = document.getElementById('join-skills').value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            // NEW CODE: Sends a single STRING
+const skills = document.getElementById('join-skills').value;
+            // Final API call body
+body: JSON.stringify({ name, mobile, location, workType, skills, bio })
             
             // Frontend validation check
             if (skills.length === 0) {
