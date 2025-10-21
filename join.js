@@ -13,7 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function initializeForm() {
         const token = localStorage.getItem('userToken');
         const loggedInUser = localStorage.getItem('loggedInUser');
-        const mobile = localStorage.getItem('loggedInMobile'); // Assuming you store mobile on login
+        // 🚨 CRITICAL FIX: Retrieve the mobile number stored during login
+        const mobile = localStorage.getItem('loggedInMobile'); 
 
         if (!token) {
             msg.textContent = 'Session expired. Please log in.';
@@ -22,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Pre-fill basic details (assuming these are stored in localStorage after login)
+        // Pre-fill fields using stored data
         nameInput.value = loggedInUser || '';
         mobileInput.value = mobile || 'Not Available'; 
     }
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Cleaner': ['Deep Cleaning', 'Commercial Cleaning', 'Window Washing', 'Floor Scrubbing', 'Sanitization'],
         'Welder': ['MIG Welding', 'TIG Welding', 'Fabrication', 'Blueprint Reading', 'Structural Steel'],
         'Mechanic': ['Engine Repair', 'Brake Systems', 'Oil Change', 'Diagnostics', 'Tire Rotation'],
+        // Add other main work types here with their sub-skills
     };
 
     function updateSuggestedSkills() {
@@ -69,6 +71,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (workTypeSelect) {
         workTypeSelect.addEventListener('change', updateSuggestedSkills);
     }
+    
+    // Initialize suggestions when the page loads
+    if (workTypeSelect) {
+        updateSuggestedSkills();
+    }
 
     // --- 2. FORM SUBMISSION HANDLER ---
     if (joinForm) {
@@ -76,14 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             msg.textContent = ''; msg.className = 'form-message';
 
-            // Gather all fields (including new ones)
+            // Gather all fields (including new ones: skills, bio)
             const name = nameInput.value;
             const mobile = mobileInput.value;
             const location = document.getElementById('join-location').value;
             const workType = workTypeSelect.value;
             const bio = document.getElementById('join-bio').value;
             
-            // Split skills input by comma, trim whitespace, and filter empty strings
+            // Process skills input
             const skills = document.getElementById('join-skills').value.split(',').map(s => s.trim()).filter(s => s.length > 0);
             
             // Frontend validation check
@@ -95,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const token = localStorage.getItem('userToken');
             if (!token) { 
-                msg.textContent = 'Not logged in. Redirecting...'; 
+                msg.textContent = 'Not logged in. Redirecting to login...'; 
                 msg.classList.add('error'); 
                 localStorage.setItem('intendedDestination', 'join.html');
                 setTimeout(() => window.location.href = 'login.html', 2000); 
@@ -109,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Content-Type': 'application/json', 
                         'Authorization': 'Bearer ' + token 
                     }, 
-                    // CRITICAL: Send ALL required fields to satisfy the backend schema
+                    // CRITICAL: Send ALL required fields
                     body: JSON.stringify({ name, mobile, location, workType, skills, bio }) 
                 });
 
@@ -126,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     let errorMessage = `Error: ${response.status} ${response.statusText}`; 
                     try { 
                         const data = await response.json(); 
-                        errorMessage = 'Error: ' + (data.message || 'Validation failed.'); 
+                        errorMessage = 'Error: ' + (data.message || 'Validation failed. Check backend logs.'); 
                     } catch (e) {} 
                     
                     msg.textContent = errorMessage; 
