@@ -19,12 +19,15 @@
             <p id="join-msg" class="form-message"></p>
             
             <input type="hidden" id="is-profile-complete" value="true">
+            <input type="hidden" id="join-password" value="placeholder_password_123">
+            <input type="hidden" id="join-confirm-password" value="placeholder_password_123">
+
 
             <div class="form-group">
                 <label for="join-name">Full Name:</label>
                 <input type="text" id="join-name" required placeholder="Your full name">
             </div>
-            
+
             <div class="form-group">
                 <label for="join-role">Your Role:</label>
                 <select id="join-role" required>
@@ -46,7 +49,7 @@
 
             <div class="form-group">
                 <label for="join-experience">Years of Experience:</label>
-                <input type="number" id="join-experience" required min="0" placeholder="e.g., 5">
+                <input type="text" id="join-experience" required placeholder="e.g., 5">
             </div>
 
             <div class="form-group">
