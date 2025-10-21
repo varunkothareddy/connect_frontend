@@ -1,4 +1,6 @@
 // --- 1. TAB SWITCHING LOGIC & GRAB ELEMENTS ---
+const API_BASE_URL = 'https://we-connect-you-backend.onrender.com/api';
+
 const loginForm = document.getElementById('login-form');
 const registerForm = document.getElementById('register-form');
 const resetPasswordForm = document.getElementById('reset-password-form');
@@ -31,85 +33,28 @@ function showForm(formName) {
         tabBtns[1].classList.add('active');
     } else if (formName === 'reset') {
         resetPasswordForm.style.display = 'block';
+        // Note: The reset form doesn't use the tabs, so they remain hidden.
     }
 }
 
-// --- Event Listeners for Forgot/Back Links ---
-forgotPasswordLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    showForm('reset');
-});
+// Event listeners for switching between login/reset
+if (forgotPasswordLink) { forgotPasswordLink.addEventListener('click', (e) => { e.preventDefault(); showForm('reset'); }); }
+if (backToLoginLink) { backToLoginLink.addEventListener('click', (e) => { e.preventDefault(); showForm('login'); }); }
 
-backToLoginLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    showForm('login');
-});
+// Show the login form by default when the page loads
+document.addEventListener('DOMContentLoaded', () => showForm('login'));
 
-
-// --- 2. REGISTRATION FORM HANDLER ---
-if (registerForm) {
-    registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        registerMsg.textContent = '';
-        registerMsg.className = 'form-message';
-
-        const name = document.getElementById('reg-name').value;
-        const mobile = document.getElementById('reg-mobile').value;
-        const password = document.getElementById('reg-password').value;
-        const confirmPass = document.getElementById('reg-password-confirm').value;
-
-        if (!/^[0-9]{10}$/.test(mobile)) {
-            registerMsg.textContent = 'Mobile number must be 10 digits.';
-            registerMsg.classList.add('error');
-            return;
-        }
-        if (password !== confirmPass) {
-            registerMsg.textContent = 'Passwords do not match.';
-            registerMsg.classList.add('error');
-            return;
-        }
-
-        try {
-            const response = await fetch('https://we-connect-you-backend.onrender.com/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, mobile, password })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                registerMsg.textContent = 'Registration successful! Please log in.';
-                registerMsg.classList.add('success');
-                // On successful registration, redirects to the login view after 2 seconds
-                setTimeout(() => showForm('login'), 2000); 
-            } else {
-                let errorMessage = `Error: ${response.status} ${response.statusText}`;
-                try { const data = await response.json(); errorMessage = 'Error: ' + data.message; } catch (e) {}
-                registerMsg.textContent = errorMessage;
-                registerMsg.classList.add('error');
-            }
-        } catch (err) {
-            console.error('Register Fetch Error:', err);
-            registerMsg.textContent = 'Network Error: Cannot connect to server.';
-            registerMsg.classList.add('error');
-        }
-    });
-} else {
-    console.error("Could not find registration form element.");
-}
-
-// --- 3. LOGIN FORM HANDLER ---
-if (loginForm) { 
+// --- 2. LOGIN FORM SUBMISSION LOGIC ---
+if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        loginMsg.textContent = '';
-        loginMsg.className = 'form-message';
+        loginMsg.textContent = ''; loginMsg.className = 'form-message';
 
         const mobile = document.getElementById('login-mobile').value;
         const password = document.getElementById('login-password').value;
 
         try {
-            const response = await fetch('https://we-connect-you-backend.onrender.com/api/login', {
+            const response = await fetch(`${API_BASE_URL}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ mobile, password })
@@ -117,22 +62,21 @@ if (loginForm) {
 
             if (response.ok) {
                 const data = await response.json();
-                loginMsg.textContent = 'Login successful! Redirecting...';
-                loginMsg.classList.add('success');
-
+                
                 localStorage.setItem('userToken', data.token);
-                localStorage.setItem('loggedInUser', data.name);
-
-                // Check for intended destination, but clear it if found
-                const intendedDest = localStorage.getItem('intendedDestination');
-                if (intendedDest) {
-                    localStorage.removeItem('intendedDestination'); // Clear the destination
+                localStorage.setItem('loggedInUser', data.name); // Store name for display
+                
+                loginMsg.textContent = 'Login successful! Redirecting to home...';
+                loginMsg.classList.add('success');
+                
+                // Check for intended destination
+                const intendedDestination = localStorage.getItem('intendedDestination');
+                if (intendedDestination) {
+                    localStorage.removeItem('intendedDestination');
+                    setTimeout(() => window.location.href = intendedDestination, 1000);
+                } else {
+                    setTimeout(() => window.location.href = 'index.html', 1000);
                 }
-
-                // 🚨 CRITICAL CHANGE: Always redirect to index.html
-                setTimeout(() => {
-                    window.location.href = 'index.html'; 
-                }, 1000);
 
             } else {
                 let errorMessage = `Error: ${response.status} ${response.statusText}`;
@@ -146,12 +90,72 @@ if (loginForm) {
             loginMsg.classList.add('error');
         }
     });
-} else {
-    console.error("Could not find login form element.");
 }
 
-// --- 4. RESET PASSWORD FORM HANDLER ---
-if (resetPasswordForm) { 
+// --- 3. REGISTER FORM SUBMISSION LOGIC ---
+if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        registerMsg.textContent = '';
+        registerMsg.className = 'form-message';
+
+        const name = document.getElementById('register-name').value;
+        const mobile = document.getElementById('register-mobile').value;
+        const password = document.getElementById('register-password').value;
+        const confirmPassword = document.getElementById('register-confirm-password').value;
+
+        if (password !== confirmPassword) {
+            registerMsg.textContent = 'Error: Passwords do not match.';
+            registerMsg.classList.add('error');
+            return;
+        }
+
+        if (!/^[0-9]{10}$/.test(mobile)) {
+             registerMsg.textContent = 'Error: Mobile number must be 10 digits.';
+             registerMsg.classList.add('error');
+             return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, mobile, password })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                
+                localStorage.setItem('userToken', data.token);
+                localStorage.setItem('loggedInUser', data.name); // Store name for display
+                
+                registerMsg.textContent = 'Registration successful! Redirecting to home...';
+                registerMsg.classList.add('success');
+                
+                const intendedDestination = localStorage.getItem('intendedDestination');
+                if (intendedDestination) {
+                    localStorage.removeItem('intendedDestination');
+                    setTimeout(() => window.location.href = intendedDestination, 1000);
+                } else {
+                    setTimeout(() => window.location.href = 'index.html', 1000);
+                }
+
+            } else {
+                let errorMessage = `Error: ${response.status} ${response.statusText}`;
+                try { const data = await response.json(); errorMessage = 'Error: ' + data.message; } catch (e) {}
+                registerMsg.textContent = errorMessage;
+                registerMsg.classList.add('error');
+            }
+        } catch (err) {
+            console.error('Register Fetch Error:', err);
+            registerMsg.textContent = 'Network Error: Cannot connect to server.';
+            registerMsg.classList.add('error');
+        }
+    });
+}
+
+// --- 4. PASSWORD RESET FORM SUBMISSION LOGIC ---
+if (resetPasswordForm) {
     resetPasswordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         resetMsg.textContent = '';
@@ -161,44 +165,35 @@ if (resetPasswordForm) {
         const newPassword = document.getElementById('reset-new-password').value;
         const confirmPassword = document.getElementById('reset-confirm-password').value;
 
-        if (!/^[0-9]{10}$/.test(mobile)) {
-            resetMsg.textContent = 'Mobile number must be 10 digits.';
-            resetMsg.classList.add('error');
-            return;
-        }
         if (newPassword !== confirmPassword) {
-            resetMsg.textContent = 'New passwords do not match.';
+            resetMsg.textContent = 'Error: New passwords do not match.';
             resetMsg.classList.add('error');
             return;
         }
-         if (newPassword.length < 6) {
-            resetMsg.textContent = 'Password must be at least 6 characters.';
-            resetMsg.classList.add('error');
-            return;
+        
+        if (!/^[0-9]{10}$/.test(mobile)) {
+             resetMsg.textContent = 'Error: Mobile number must be 10 digits.';
+             resetMsg.classList.add('error');
+             return;
         }
 
         try {
-            console.log("Sending password reset request for mobile:", mobile);
-            const response = await fetch('https://we-connect-you-backend.onrender.com/api/reset-password', {
+            const response = await fetch(`${API_BASE_URL}/reset-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ mobile, newPassword })
             });
-            console.log("Reset response status:", response.status);
 
             if (response.ok) {
-                const data = await response.json();
-                console.log("Reset successful:", data);
                 resetMsg.textContent = 'Password updated successfully! You can now log in.';
                 resetMsg.classList.add('success');
                 setTimeout(() => {
-                    showForm('login');
+                    showForm('login'); // Redirect back to the login form
                     resetPasswordForm.reset();
-                }, 3000);
+                }, 1500);
             } else {
                 let errorMessage = `Error: ${response.status} ${response.statusText}`;
                 try { const data = await response.json(); errorMessage = 'Error: ' + data.message; } catch (e) {}
-                console.error("Reset failed:", errorMessage);
                 resetMsg.textContent = errorMessage;
                 resetMsg.classList.add('error');
             }
@@ -208,9 +203,4 @@ if (resetPasswordForm) {
             resetMsg.classList.add('error');
         }
     });
-} else {
-    console.error("Could not find reset password form element.");
 }
-
-// Show the login form by default when the page loads
-showForm('login');
