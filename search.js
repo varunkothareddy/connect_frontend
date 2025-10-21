@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://we-connect-you-backend.onrender.com/api';
+const API_BASE_URL = 'https://we-connect-you-backend.onrender.com/api/search';
 
 // --- 1. Define Sub-Work Options (Same as join.js) ---
 const SUB_WORK_OPTIONS = {
@@ -40,25 +40,39 @@ document.getElementById('search-form').addEventListener('submit', async (e) => {
     const msg = document.getElementById('search-msg');
     msg.textContent = ''; msg.className = 'form-message';
     
-    const location = document.getElementById('search-location').value;
-    const workType = document.getElementById('search-work-type').value;
-    const subWorkType = document.getElementById('search-sub-work-type').value; // <-- NEW FIELD
+    // Get values, trim whitespace
+    const location = document.getElementById('search-location').value.trim();
+    const workType = document.getElementById('search-work-type').value.trim();
+    const subWorkType = document.getElementById('search-sub-work-type').value.trim();
 
     const token = localStorage.getItem('userToken');
     if (!token) { msg.textContent = 'Not logged in. Redirecting...'; msg.classList.add('error'); setTimeout(() => window.location.href = 'login.html', 2000); return; }
 
-    try {
-        // Construct the URL with all parameters
-        const url = new URL(`${API_BASE_URL}/search`);
-        url.searchParams.append('location', location);
-        url.searchParams.append('workType', workType);
-        
-        // Add subWorkType only if it has a value (not the default empty string)
-        if (subWorkType) {
-            url.searchParams.append('subWorkType', subWorkType);
-        }
+    // --- CRITICAL FIX: Robustly build the query string ---
+    const searchParams = new URLSearchParams();
 
-        const response = await fetch(url.toString(), { 
+    // Location is required by the HTML form, but add it safely.
+    if (location) {
+        searchParams.append('location', location);
+    } else {
+        msg.textContent = 'Error: Location is required for search.';
+        msg.classList.add('error');
+        return;
+    }
+
+    // Add workType and subWorkType only if they have a non-empty value
+    if (workType && workType !== 'all' && workType !== '-- Select work --') {
+        searchParams.append('workType', workType);
+    }
+    
+    if (subWorkType && subWorkType !== 'all' && subWorkType !== '-- Any specialization --') {
+        searchParams.append('subWorkType', subWorkType);
+    }
+    
+    try {
+        const url = `${API_BASE_URL}/search?${searchParams.toString()}`;
+
+        const response = await fetch(url, { 
             method: 'GET', 
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token } 
         });
@@ -70,8 +84,12 @@ document.getElementById('search-form').addEventListener('submit', async (e) => {
             sessionStorage.setItem('searchResults', JSON.stringify(data));
             setTimeout(() => window.location.href = 'results.html', 500);
         } else {
+            // Read and display the specific error message from the backend
             let errorMessage = `Error: ${response.status} ${response.statusText}`; 
-            try { const data = await response.json(); errorMessage = 'Error: ' + data.message; } catch (e) {} 
+            try { 
+                const data = await response.json(); 
+                errorMessage = 'Search Error: ' + data.message; 
+            } catch (e) {} 
             msg.textContent = errorMessage; 
             msg.classList.add('error');
         }
