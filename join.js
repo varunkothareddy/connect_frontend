@@ -1,91 +1,82 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const joinForm = document.getElementById('join-form');
-    const nameInput = document.getElementById('join-name');
-    const mobileInput = document.getElementById('join-mobile');
-    const locationInput = document.getElementById('join-location');
-    const workTypeSelect = document.getElementById('join-work-type');
-    const msg = document.getElementById('join-msg');
+const API_BASE_URL = 'https://we-connect-you-backend.onrender.com/api';
 
-    // --- 0. Initial Setup ---
-    function initializeForm() {
-        const token = localStorage.getItem('userToken');
-        if (!token) {
-            msg.textContent = 'Session expired. Please log in.';
-            msg.classList.add('error');
-            setTimeout(() => window.location.href = 'login.html', 2000);
-            return;
-        }
-    }
+// --- 1. Define Sub-Work Options ---
+const SUB_WORK_OPTIONS = {
+    plumber: ['Pipe Repair', 'Fixture Installation', 'Drain Cleaning'],
+    electrician: ['Wiring', 'Switch/Socket Repair', 'Appliance Installation'],
+    painter: ['Interior Painting', 'Exterior Painting', 'Wall Preparation'],
+    carpenter: ['Furniture Repair', 'Custom Cabinets', 'Wood Flooring'],
+    'day-laborer': ['Loading/Unloading', 'Site Cleaning', 'Masonry Help'],
+    maid: ['Deep Cleaning', 'Regular Cleaning', 'Cooking'],
+    driver: ['Heavy Vehicle', 'Light Vehicle', 'Taxi/Cab']
+};
 
-    // --- 1. FORM SUBMISSION HANDLER ---
-    if (joinForm) {
-        joinForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            msg.textContent = ''; msg.className = 'form-message';
+// --- 2. Dynamic Dropdown Logic ---
+window.populateSubWork = function() {
+    const workType = document.getElementById('join-work-type').value;
+    const subWorkGroup = document.getElementById('sub-work-group');
+    const subWorkSelect = document.getElementById('join-sub-work-type');
 
-            // Gather ONLY the FOUR fields required by the WorkerSchema
-            const name = nameInput.value.trim();
-            const mobile = mobileInput.value.trim();
-            const location = locationInput.value.trim();
-            const workType = workTypeSelect.value.trim();
-            
-            // 🔑 CRITICAL: Comprehensive Client-Side Validation
-            if (!name) {
-                msg.textContent = 'Full Name is required.'; msg.classList.add('error'); return;
-            }
-            if (!mobile || mobile.length !== 10) {
-                msg.textContent = 'Mobile number must be 10 digits.'; msg.classList.add('error'); return;
-            }
-            if (!location) {
-                msg.textContent = 'Location/Town is required.'; msg.classList.add('error'); return;
-            }
-            if (!workType) {
-                msg.textContent = 'Kind of Work must be selected.'; msg.classList.add('error'); return;
-            }
+    subWorkSelect.innerHTML = '<option value="">-- Select specialization --</option>';
 
-            const token = localStorage.getItem('userToken');
-            if (!token) { 
-                msg.textContent = 'Not logged in. Redirecting...'; 
-                msg.classList.add('error'); 
-                localStorage.setItem('intendedDestination', 'join.html');
-                setTimeout(() => window.location.href = 'login.html', 2000); 
-                return; 
-            }
-
-            try {
-                const response = await fetch('https://we-connect-you-backend.onrender.com/api/join', { 
-                    method: 'POST', 
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        'Authorization': 'Bearer ' + token 
-                    }, 
-                    // Send ONLY the four required fields
-                    body: JSON.stringify({ name, mobile, location, workType }) 
-                });
-
-                if (response.ok) {
-                    const data = await response.json(); 
-                    msg.textContent = 'Profile saved! Redirecting home...'; 
-                    msg.classList.add('success');
-                    setTimeout(() => { window.location.href = 'index.html'; }, 2000); 
-                } else {
-                    let errorMessage = `Error: ${response.status} ${response.statusText}`; 
-                    try { 
-                        const data = await response.json(); 
-                        // The error message from the backend is captured here
-                        errorMessage = 'Error: ' + (data.message || 'Validation failed. Check database connection/permissions.'); 
-                    } catch (e) {} 
-                    
-                    msg.textContent = errorMessage; 
-                    msg.classList.add('error'); 
-                }
-            } catch (err) { 
-                console.error('Join Fetch Error:', err); 
-                msg.textContent = 'SERVER DOWN? Connection error.'; 
-                msg.classList.add('error'); 
-            }
+    if (workType && SUB_WORK_OPTIONS[workType]) {
+        SUB_WORK_OPTIONS[workType].forEach(subWork => {
+            const option = document.createElement('option');
+            option.value = subWork;
+            option.textContent = subWork;
+            subWorkSelect.appendChild(option);
         });
+        subWorkGroup.style.display = 'block';
+        subWorkSelect.required = true;
+    } else {
+        subWorkGroup.style.display = 'none';
+        subWorkSelect.required = false;
     }
+}
+// Run this on load to set up the form
+document.addEventListener('DOMContentLoaded', populateSubWork);
 
-    initializeForm();
+
+// --- 3. Form Submission Logic ---
+document.getElementById('join-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('join-msg');
+    msg.textContent = ''; msg.className = 'form-message';
+    
+    const name = document.getElementById('join-name').value;
+    const mobile = document.getElementById('join-mobile').value;
+    const location = document.getElementById('join-location').value;
+    const workType = document.getElementById('join-work-type').value;
+    const subWorkType = document.getElementById('join-sub-work-type').value; // <-- NEW FIELD
+
+    if (!/^[0-9]{10}$/.test(mobile)) { msg.textContent = 'Mobile number must be 10 digits.'; msg.classList.add('error'); return; }
+
+    const token = localStorage.getItem('userToken');
+    if (!token) { msg.textContent = 'Not logged in. Redirecting...'; msg.classList.add('error'); setTimeout(() => window.location.href = 'login.html', 2000); return; }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/join`, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, 
+            // SEND NEW FIELD
+            body: JSON.stringify({ name, mobile, location, workType, subWorkType }) 
+        });
+
+        if (response.ok) {
+            msg.textContent = 'Profile saved! Redirecting home...'; 
+            msg.classList.add('success');
+            setTimeout(() => { window.location.href = 'index.html'; }, 1000); 
+            document.getElementById('join-form').reset();
+        } else {
+            let errorMessage = `Error: ${response.status} ${response.statusText}`; 
+            try { const data = await response.json(); errorMessage = 'Error: ' + data.message; } catch (e) {} 
+            msg.textContent = errorMessage; 
+            msg.classList.add('error'); 
+            if (response.status === 401) { setTimeout(() => window.location.href = 'login.html', 2000); }
+        }
+    } catch (err) { 
+        console.error('Join Fetch Error:', err); 
+        msg.textContent = 'Network Error: Cannot connect to server.';
+        msg.classList.add('error'); 
+    }
 });
