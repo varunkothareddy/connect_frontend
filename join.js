@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 0. Initial Setup ---
     function initializeForm() {
         const token = localStorage.getItem('userToken');
+        
+        // CRITICAL: Removed all logic to pre-fill name and mobile.
+        // User must now manually enter these fields.
 
         if (!token) {
             msg.textContent = 'Session expired. Please log in.';
@@ -19,10 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => window.location.href = 'login.html', 2000);
             return;
         }
-
-        // Pre-fill fields using stored data
-        nameInput.value = loggedInUser || '';
-        mobileInput.value = mobile || 'Not Available'; 
     }
 
     // --- 1. DYNAMIC SKILLS LOGIC ---
@@ -33,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'Cleaner': ['Deep Cleaning', 'Commercial Cleaning', 'Window Washing', 'Floor Scrubbing', 'Sanitization'],
         'Welder': ['MIG Welding', 'TIG Welding', 'Fabrication', 'Blueprint Reading', 'Structural Steel'],
         'Mechanic': ['Engine Repair', 'Brake Systems', 'Oil Change', 'Diagnostics', 'Tire Rotation'],
-        // Add other main work types here with their sub-skills
     };
 
     function updateSuggestedSkills() {
@@ -64,12 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Attach the listener to the work type selector
     if (workTypeSelect) {
         workTypeSelect.addEventListener('change', updateSuggestedSkills);
     }
-    
-    // Initialize suggestions when the page loads
     if (workTypeSelect) {
         updateSuggestedSkills();
     }
@@ -96,6 +91,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 msg.classList.add('error'); 
                 return; 
             }
+            if (mobile.length !== 10) {
+                msg.textContent = 'Mobile number must be 10 digits.'; 
+                msg.classList.add('error'); 
+                return; 
+            }
+
 
             const token = localStorage.getItem('userToken');
             if (!token) { 
@@ -113,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Content-Type': 'application/json', 
                         'Authorization': 'Bearer ' + token 
                     }, 
-                    // CRITICAL: Send ALL required fields
+                    // Send ALL required fields to satisfy the backend schema
                     body: JSON.stringify({ name, mobile, location, workType, skills, bio }) 
                 });
 
