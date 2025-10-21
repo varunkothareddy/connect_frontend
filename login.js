@@ -37,12 +37,12 @@ function showForm(formName) {
 // --- Event Listeners for Forgot/Back Links ---
 forgotPasswordLink.addEventListener('click', (e) => {
     e.preventDefault();
-    showForm('reset'); // This works to show the Reset Password form
+    showForm('reset');
 });
 
 backToLoginLink.addEventListener('click', (e) => {
     e.preventDefault();
-    showForm('login'); // This works to return to the Login form
+    showForm('login');
 });
 
 
@@ -70,7 +70,6 @@ if (registerForm) {
         }
 
         try {
-            // Sends data to the stable backend for DB storage
             const response = await fetch('https://we-connect-you-backend.onrender.com/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -78,9 +77,10 @@ if (registerForm) {
             });
 
             if (response.ok) {
-                // Shows success message and redirects to login after 2 seconds
+                const data = await response.json();
                 registerMsg.textContent = 'Registration successful! Please log in.';
                 registerMsg.classList.add('success');
+                // On successful registration, redirects to the login view after 2 seconds
                 setTimeout(() => showForm('login'), 2000); 
             } else {
                 let errorMessage = `Error: ${response.status} ${response.statusText}`;
@@ -99,7 +99,7 @@ if (registerForm) {
 }
 
 // --- 3. LOGIN FORM HANDLER ---
-if (loginForm) {
+if (loginForm) { 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         loginMsg.textContent = '';
@@ -109,7 +109,6 @@ if (loginForm) {
         const password = document.getElementById('login-password').value;
 
         try {
-            // Sends data to the stable backend for login verification
             const response = await fetch('https://we-connect-you-backend.onrender.com/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -121,20 +120,18 @@ if (loginForm) {
                 loginMsg.textContent = 'Login successful! Redirecting...';
                 loginMsg.classList.add('success');
 
-                // Stores token for future authorized requests
                 localStorage.setItem('userToken', data.token);
                 localStorage.setItem('loggedInUser', data.name);
 
+                // Check for intended destination, but clear it if found
                 const intendedDest = localStorage.getItem('intendedDestination');
+                if (intendedDest) {
+                    localStorage.removeItem('intendedDestination'); // Clear the destination
+                }
 
-                // Redirects to the main page (or intended destination)
+                // 🚨 CRITICAL CHANGE: Always redirect to index.html
                 setTimeout(() => {
-                    if (intendedDest) {
-                        localStorage.removeItem('intendedDestination');
-                        window.location.href = intendedDest;
-                    } else {
-                        window.location.href = 'index.html';
-                    }
+                    window.location.href = 'index.html'; 
                 }, 1000);
 
             } else {
@@ -153,8 +150,8 @@ if (loginForm) {
     console.error("Could not find login form element.");
 }
 
-// --- 4. RESET PASSWORD FORM HANDLER (Forgot Password) ---
-if (resetPasswordForm) {
+// --- 4. RESET PASSWORD FORM HANDLER ---
+if (resetPasswordForm) { 
     resetPasswordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         resetMsg.textContent = '';
@@ -164,21 +161,34 @@ if (resetPasswordForm) {
         const newPassword = document.getElementById('reset-new-password').value;
         const confirmPassword = document.getElementById('reset-confirm-password').value;
 
-        // Validation logic
-        if (!/^[0-9]{10}$/.test(mobile)) { /* ... */ return; }
-        if (newPassword !== confirmPassword) { /* ... */ return; }
-        if (newPassword.length < 6) { /* ... */ return; }
+        if (!/^[0-9]{10}$/.test(mobile)) {
+            resetMsg.textContent = 'Mobile number must be 10 digits.';
+            resetMsg.classList.add('error');
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            resetMsg.textContent = 'New passwords do not match.';
+            resetMsg.classList.add('error');
+            return;
+        }
+         if (newPassword.length < 6) {
+            resetMsg.textContent = 'Password must be at least 6 characters.';
+            resetMsg.classList.add('error');
+            return;
+        }
 
         try {
-            // Sends request to backend to change password in DB
+            console.log("Sending password reset request for mobile:", mobile);
             const response = await fetch('https://we-connect-you-backend.onrender.com/api/reset-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ mobile, newPassword })
             });
+            console.log("Reset response status:", response.status);
 
             if (response.ok) {
-                // Shows success message and redirects to login after 3 seconds
+                const data = await response.json();
+                console.log("Reset successful:", data);
                 resetMsg.textContent = 'Password updated successfully! You can now log in.';
                 resetMsg.classList.add('success');
                 setTimeout(() => {
@@ -186,10 +196,16 @@ if (resetPasswordForm) {
                     resetPasswordForm.reset();
                 }, 3000);
             } else {
-                // ... Error handling
+                let errorMessage = `Error: ${response.status} ${response.statusText}`;
+                try { const data = await response.json(); errorMessage = 'Error: ' + data.message; } catch (e) {}
+                console.error("Reset failed:", errorMessage);
+                resetMsg.textContent = errorMessage;
+                resetMsg.classList.add('error');
             }
         } catch (err) {
-            // ... Network Error handling
+            console.error('Reset Fetch Error:', err);
+            resetMsg.textContent = 'Network Error: Cannot connect to server.';
+            resetMsg.classList.add('error');
         }
     });
 } else {
