@@ -3,151 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Worker Profile - We Connect You</title>
-    <link rel="stylesheet" href="style.css"> 
+    <title>Join as Worker - We Connect You</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-    <style>
-        /* --- 1. Root Variables (if not already in style.css) --- */
-        :root {
-            --primary-color: #007bff; /* Blue */
-            --secondary-color: #6c757d; /* Gray */
-            --success-color: #28a745; /* Green */
-            --error-color: #dc3545; /* Red */
-            --background-light: #f8f9fa; /* Very Light Gray */
-            --card-background: #ffffff; /* White */
-            --text-primary: #343a40; /* Dark text */
-            --border-color: #dee2e6;
-            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        /* --- 2. Navbar Logo Adjustment (from your previous code) --- */
-        .navbar-container img {
-            height: 10vh;
-            width: auto; 
-            max-width: 10vw;
-        }
-
-        /* --- 3. Profile Form Styling (From profile.css) --- */
-
-        /* Main Form Wrapper */
-        .profile-form-wrapper {
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-            background-color: var(--background-light);
-            min-height: calc(100vh - 100px); /* Adjust based on navbar height */
-        }
-
-        .profile-form {
-            width: 100%;
-            max-width: 500px;
-            padding: 30px;
-            background: var(--card-background);
-            border-radius: 10px;
-            box-shadow: var(--shadow-light);
-            border-top: 5px solid var(--primary-color);
-        }
-
-        .profile-form h2 {
-            text-align: center;
-            color: var(--text-primary);
-            margin-bottom: 5px;
-            font-size: 1.8rem;
-        }
-
-        .profile-form .form-subtext {
-            text-align: center;
-            color: var(--secondary-color);
-            margin-bottom: 25px;
-            font-size: 0.95rem;
-        }
-
-        /* Form Groups and Inputs */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-        }
-
-        .profile-form input[type="text"],
-        .profile-form input[type="tel"],
-        .profile-form select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1rem;
-            color: var(--text-primary);
-            transition: border-color 0.3s, box-shadow 0.3s;
-            background-color: #fcfcfc;
-        }
-
-        .profile-form input:focus,
-        .profile-form select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-            outline: none;
-        }
-
-        /* Button Styling */
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
-            margin-top: 10px;
-        }
-
-        .btn-submit:hover {
-            background-color: #0056b3; /* Darker blue */
-        }
-
-        .btn-submit:active {
-            transform: scale(0.99);
-        }
-
-        /* Message Styles */
-        .form-message {
-            text-align: center;
-            padding: 10px;
-            margin-top: 15px;
-            border-radius: 6px;
-            font-weight: 500;
-        }
-
-        .form-message.error {
-            background-color: #f8d7da;
-            color: var(--error-color);
-            border: 1px solid var(--error-color);
-        }
-
-        .form-message.success {
-            background-color: #d4edda;
-            color: var(--success-color);
-            border: 1px solid var(--success-color);
-        }
-
-        /* Icon in Header */
-        .profile-form h2 .fas {
-            margin-right: 10px;
-            color: var(--primary-color);
-        }
-    </style>
-    </head>
+<style>
+    .navbar-container img{
+        height: 10vh;
+        width:10vw;
+    }
+</style>
+</head>
 <body>
     <header class="navbar">
         <div class="navbar-container">
@@ -167,32 +33,25 @@
     </header>
 
     <main class="container">
-        <div class="profile-form-wrapper">
-            <form id="join-form" class="profile-form">
-                <h2><i class="fas fa-tools"></i> Create Your Worker Profile</h2>
-                <p class="form-subtext">
-                    Fill out these four details to start getting jobs and appear in searches.
-                </p>
-                
+        <div class="login-container" style="max-width: 550px;">
+            <form id="join-form" class="login-form active">
+                <h2>Register Your Worker Profile</h2>
                 <div class="form-group">
-                    <label for="join-name">Full Name</label>
-                    <input type="text" id="join-name" required placeholder="Your full name">
+                    <label for="join-name">Your Full Name (As you want it displayed):</label>
+                    <input type="text" id="join-name" required>
                 </div>
-                
                 <div class="form-group">
-                    <label for="join-mobile">Public Mobile Number</label>
-                    <input type="tel" id="join-mobile" required pattern="[0-9]{10}" maxlength="10" title="10-digit mobile number" placeholder="e.g., 9876543210">
+                    <label for="join-mobile">Public Mobile Number:</label>
+                    <input type="tel" id="join-mobile" required pattern="[0-9]{10}" maxlength="10" title="10-digit mobile number">
                 </div>
-                
                 <div class="form-group">
-                    <label for="join-location">Your Location/Town</label>
-                    <input type="text" id="join-location" required placeholder="e.g., Hyderabad, Gachibowli">
+                    <label for="join-location">Your Location/Town:</label>
+                    <input type="text" id="join-location" required>
                 </div>
-                
                 <div class="form-group">
-                    <label for="join-work-type">Kind of Work</label>
-                    <select id="join-work-type" required>
-                        <option value="">-- Select your main profession --</option>
+                    <label for="join-work-type">Kind of Work:</label>
+                    <select id="join-work-type" required onchange="populateSubWork()"> 
+                        <option value="">-- Select work --</option>
                         <option value="plumber">Plumber</option>
                         <option value="electrician">Electrician</option>
                         <option value="painter">Painter</option>
@@ -203,14 +62,23 @@
                     </select>
                 </div>
                 
-                <button type="submit" class="btn-submit">Save Profile and Finish</button>
+                <div class="form-group" id="sub-work-group" style="display:none;">
+                    <label for="join-sub-work-type">Sub-Work Specialization:</label>
+                    <select id="join-sub-work-type" required>
+                        <option value="">-- Select specialization --</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">Submit Profile</button>
                 <p id="join-msg" class="form-message"></p>
             </form>
         </div>
-        <a href="index.html" class="fab-home" aria-label="Back to Home">
+    </main>
+    
+    <a href="index.html" class="fab-home" aria-label="Back to Home">
         <i class="fas fa-home"></i>
     </a>
-    </main>
+    
     <script src="auth.js"></script>
     <script src="join.js"></script>
 </body>
