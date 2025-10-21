@@ -3,12 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const nameInput = document.getElementById('join-name');
     const mobileInput = document.getElementById('join-mobile');
     const msg = document.getElementById('join-msg');
-
+    const locationInput = document.getElementById('join-location');
     const workTypeSelect = document.getElementById('join-work-type');
-    const skillsInput = document.getElementById('join-skills');
-    const skillsContainer = document.getElementById('suggested-skills-container');
+    
+    // NOTE: All dynamic logic (skills, experience, bio) is removed as the backend doesn't support those fields.
 
-    // --- 0. Initial Setup (Unchanged) ---
+    // --- 0. Initial Setup ---
     function initializeForm() {
         const token = localStorage.getItem('userToken');
         if (!token) {
@@ -19,46 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 1. DYNAMIC SKILLS LOGIC (Unchanged) ---
-    const skillSuggestions = {
-        'Plumber': ['Pipe Fitting', 'Drain Cleaning', 'Water Heater Repair', 'Fixture Installation', 'Leak Detection'],
-        'Electrician': ['House Wiring', 'Circuit Breakers', 'Troubleshooting', 'Solar Installation', 'Appliance Repair'],
-        'Carpenter': ['Cabinet Making', 'Framing', 'Furniture Repair', 'Laminate Flooring', 'Drywall'],
-        'Cleaner': ['Deep Cleaning', 'Commercial Cleaning', 'Window Washing', 'Floor Scrubbing', 'Sanitization'],
-        'Welder': ['MIG Welding', 'TIG Welding', 'Fabrication', 'Blueprint Reading', 'Structural Steel'],
-        'Mechanic': ['Engine Repair', 'Brake Systems', 'Oil Change', 'Diagnostics', 'Tire Rotation'],
-    };
-
-    function updateSuggestedSkills() {
-        const selectedWorkType = workTypeSelect.value;
-        const suggestions = skillSuggestions[selectedWorkType] || [];
-        
-        skillsContainer.innerHTML = ''; 
-
-        if (!selectedWorkType) {
-            skillsContainer.innerHTML = '<p style="font-size:0.9em; color:#999;">Select a profession above to see suggestions.</p>';
-            return;
-        }
-
-        suggestions.forEach(skill => {
-            const label = document.createElement('span');
-            label.className = 'skill-label';
-            label.textContent = skill;
-            label.addEventListener('click', () => {
-                let currentSkills = skillsInput.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
-                if (!currentSkills.includes(skill)) {
-                    currentSkills.push(skill);
-                    skillsInput.value = currentSkills.join(', ') + ', '; 
-                }
-            });
-            skillsContainer.appendChild(label);
-        });
-    }
-
-    if (workTypeSelect) {
-        workTypeSelect.addEventListener('change', updateSuggestedSkills);
-        updateSuggestedSkills();
-    }
+    // --- 1. DYNAMIC SKILLS LOGIC (Removed - Backend doesn't support it) ---
 
     // --- 2. FORM SUBMISSION HANDLER ---
     if (joinForm) {
@@ -66,31 +27,13 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             msg.textContent = ''; msg.className = 'form-message';
 
-            // Gather ALL fields
+            // Gather ONLY the FOUR fields required by the WorkerSchema
             const name = nameInput.value;
-            const role = document.getElementById('join-role').value;
-            const email = document.getElementById('join-email').value; 
             const mobile = mobileInput.value;
-            
-            // Hidden fields
-            const password = document.getElementById('join-password').value; 
-            const confirmPassword = document.getElementById('join-confirm-password').value;
-            
-            // Experience sent as a string to avoid Number type mismatch
-            const experience = document.getElementById('join-experience').value; 
-            
-            const location = document.getElementById('join-location').value;
+            const location = locationInput.value;
             const workType = workTypeSelect.value;
-            const bio = document.getElementById('join-bio').value;
-            const isProfileComplete = document.getElementById('is-profile-complete').value; 
             
-            // Skills as array
-            const skills = document.getElementById('join-skills').value
-                .split(',')
-                .map(s => s.trim())
-                .filter(s => s.length > 0); 
-            
-            // Basic Frontend validation check (Unchanged)
+            // Basic Frontend validation check
             if (mobile.length !== 10) {
                 msg.textContent = 'Mobile number must be 10 digits.'; 
                 msg.classList.add('error'); 
@@ -113,8 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Content-Type': 'application/json', 
                         'Authorization': 'Bearer ' + token 
                     }, 
-                    // CRITICAL: Sending ALL fields
-                    body: JSON.stringify({ name, role, email, mobile, password, confirmPassword, experience, location, workType, skills, bio, isProfileComplete }) 
+                    // Send ONLY the FOUR required fields
+                    body: JSON.stringify({ name, mobile, location, workType }) 
                 });
 
                 if (response.ok) {
