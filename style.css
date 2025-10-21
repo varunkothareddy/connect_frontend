@@ -39,3 +39,27 @@ body { font-family: sans-serif; margin: 0; background-color: var(--bg-color); co
     .card { width: 90%; max-width: 400px; }
     .login-text { display: none; }
 }
+/* --- Floating Action Button (FAB) for Home --- */
+.fab-home {
+    position: fixed; /* Makes it float relative to the viewport */
+    bottom: 30px; /* Distance from the bottom */
+    right: 30px; /* Distance from the right */
+    width: 55px;
+    height: 55px;
+    border-radius: 50%; /* Makes it circular */
+    background-color: var(--primary-color);
+    color: var(--card-color); /* White/Card color for the icon */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Ensures it stays on top of other elements */
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    text-decoration: none; /* Remove underline */
+}
+
+.fab-home:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.05);
+}
