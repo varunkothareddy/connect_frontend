@@ -12,9 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 0. Initial Setup ---
     function initializeForm() {
         const token = localStorage.getItem('userToken');
-        const loggedInUser = localStorage.getItem('loggedInUser');
-        // 🚨 CRITICAL FIX: Retrieve the mobile number stored during login
-        const mobile = localStorage.getItem('loggedInMobile'); 
 
         if (!token) {
             msg.textContent = 'Session expired. Please log in.';
